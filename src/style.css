@@ -1,8 +1,107 @@
 svg {
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 svg {
   /* width: 100%;
   height: 100%; */
 }
+.tooltip {
+  display: block;
+  border-radius: 4px;
+  border: 1px solid gray;
+  background: white;
+  padding: 10px;
+  color: gray;
+  font-family: 'Times New Roman', Times, serif;
+} 
+body { font: 12px Arial;}  	/* set the default text for anything occuring in the of the html */
+ 
+	path.line {
+	  fill: none;
+	  stroke: purple;
+	  stroke-width: 1.5;
+	}
+	  
+	path.area {
+	  fill: #E2B2B2;
+	}
+	  
+	.axis {
+	   shape-rendering: crispEdges;
+	}
+     
+  .x.axis line, .x.axis path {
+    fill: none;
+    stroke-width: 3.0;
+  }
+
+	.x.axis line {
+	   stroke: green;
+	   stroke-width: 4.0;
+	}
+	  
+	.x.axis .minor {
+	   stroke-opacity: .5;
+	   stroke: red;
+	   stroke-width: 1.5;
+	}
+	 
+	.x.axis path {
+	}
+	   
+	.y.axis line, .y.axis path {
+	   fill: none;
+	   stroke-width: 2.0;
+  }
+ 
+	.y.axis .minor{
+	   stroke: #52D12A;
+	   stroke-width: 1.5;
+     stroke-opacity: 0.5;
+  }
+
+  text {
+    font-size: 14px;
+  }
+
+  .category {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    padding: 10px 30px;
+    border: 1px solid #5e5e5e;
+  }
+
+  .category .group {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .category .group h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 15px;
+  }
+   
+  .category .group::before {
+    content: '';
+    display: inline-block;
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+  }
+  .category .group.red::before {
+    background: #ff8c8c;
+  }
+  .category .group.blue::before {
+    background: #7aceff;
+  }
+  
+  

@@ -1,51 +1,84 @@
 import * as d3 from 'd3';
+
 let width = 800;
 let height = 800;
 let padding = 50;
 
 let data1 = [
   {
-    date: new Date(2020, 3, 24),
-    value: 20
+    date: new Date('2020/08/10 08:00:00'),
+    value: 1
   },
   {
-    date: new Date(2020, 3, 25),
-    value: 93
+    date: new Date('2020/08/10 09:00:00'),
+    value: 1.5
   },
   {
-    date: new Date(2020, 3, 28),
-    value: 50
+    date: new Date('2020/08/10 10:00:00'),
+    value: 2
+  },
+  {
+    date: new Date('2020/08/10 11:00:00'),
+    value: 2
+  },
+  {
+    date: new Date('2020/08/10 12:00:00'),
+    value: 1
+  },
+  {
+    date: new Date('2020/08/10 13:00:00'),
+    value: 1
+  },
+  {
+    date: new Date('2020/08/10 14:00:00'),
+    value: 1
+  },
+  {
+    date: new Date('2020/08/10 15:00:00'),
+    value: 1
+  },
+  {
+    date: new Date('2020/08/10 16:00:00'),
+    value: 0
   }
 ]
 
 let data2 = [
   {
-    date: new Date(2020, 4, 3),
-    value: 50
+    date: new Date('2020/08/10 8:00:00'),
+    value: 3
   },
   {
-    date: new Date(2020, 3, 21),
-    value: 25
+    date: new Date('2020/08/10 9:00:00'),
+    value: 3
   },
   {
-    date: new Date(2020, 3, 27),
-    value: 120
+    date: new Date('2020/08/10 10:00:00'),
+    value: 3
   },
   {
-    date: new Date(2020, 3, 6),
-    value: 95
+    date: new Date('2020/08/10 11:00:00'),
+    value: 3
   },
   {
-    date: new Date(2020, 1, 2),
-    value: 23
+    date: new Date('2020/08/10 12:00:00'),
+    value: 3
   },
   {
-    date: new Date(2020, 3, 1),
-    value: 12
+    date: new Date('2020/08/10 13:00:00'),
+    value: 2
   },
   {
-    date: new Date(2020, 3, 9),
-    value: 5
+    date: new Date('2020/08/10 14:00:00'),
+    value: -1
+  },
+  {
+    date: new Date('2020/08/10 15:00:00'),
+    value: 0
+  },
+  {
+    date: new Date('2020/08/10 16:00:00'),
+    value: 1
   }
 ]
 
@@ -66,29 +99,56 @@ let xScale = d3.scaleTime()
               .range([0, width - padding - padding])
 
 let yScale = d3.scaleLinear()
-              .domain(yExtent)
-              
+              .domain([-3, 5])
               .range([height - padding - padding, 0])
+
+let yAxis = d3.axisLeft()
+              .tickSize(-width + padding + padding, 0, 0)
+              // .tickValues(data.map(d => d.value))
+              .scale(yScale)
 
 let xAxis = d3.axisBottom()
               .tickSize(-height + padding + padding, 0, 0)
               // .tickValues(data.map(d => d.date))
-              .ticks(d3.timeDay.every(1))
+              // .ticks(d3.timeDay.every(1))
               .scale(xScale)
               
-let yAxis = d3.axisLeft()
-              .tickSize(-width + padding + padding, 0, 0)
-              .tickValues(data.map(d => d.value))
-              .scale(yScale);
 
 let xaxis = svg.append('g')
+  .attr("class", "x axis")
   .attr('transform', `translate(${padding}, ${height - padding})`)
-  .call(xAxis);
+  .call(xAxis)
+  .call(xAxisText)
+  
+  
+  function grid(e) {
+    console.log(e.selectAll('line'));
+    console.log('grid', e);
+    console.log('selectAll', e.selectAll('line'));
+    // e.selectAll('line')[0].map(d => console.log(d));
+    //  .append('rect')
+    //  .attr('x', 0)
+    //  .attr('y', e => yScale(e))
+    //  .attr('width', width)
+    //  .attr('height', height)
+    //  .attr('fill', 'red')
+    
+  }
 
 let yaxis = svg.append('g')
+  .attr("class", "y axis")
   .attr('transform', `translate(${padding}, ${padding})`)
-  .call(yAxis);
+  .call(yAxis)
+  .call(yAxisText)
+  .call(grid)
 
+function yAxisText(selection) {
+  selection.selectAll('text').attr('transform', 'translate(-10, 0)');
+}
+
+function xAxisText(selection) {
+  selection.selectAll('text').attr('transform', 'translate(0, 10)');
+}
 xaxis.selectAll("line")
     .style("stroke", "#EFEFEF");  
 
@@ -113,14 +173,14 @@ let update2 = gs.data([data2.sort((a, b) => {
 update1.enter().append('path')
   .attr('d', line)
   .attr('fill', 'none')
-  .attr('stroke', 'red')
+  .attr('stroke', '#ff8c8c')
   .attr('stroke-width', 2)
   .attr('transform', `translate(${padding}, ${padding})`)
 
 update2.enter().append('path')
   .attr('d', line)
   .attr('fill', 'none')
-  .attr('stroke', 'blue')
+  .attr('stroke', '#7aceff')
   .attr('stroke-width', 2)
   .attr('transform', `translate(${padding}, ${padding})`)
 
@@ -128,16 +188,88 @@ update1.exit().remove();
 update2.exit().remove();
 
 svg.selectAll('myCircles')
-  .data(data)
+  .data(data1)
   .enter()
   .append('circle')
-  .attr('fill', 'red')
-  .attr('stroke', 'none')
+  .attr('fill', 'white')
+  .attr('stroke', '#ff8c8c')
+  .attr('stroke-width', 2)
   .attr('class', 'dot')
+  .attr('data-date', d => d.date)
+  .attr('data-value', d => d.value)
   .attr('cx', d => xScale(d.date))
   .attr('cy', d => yScale(d.value))
-  .attr('r', 3)
+  .attr('r', 4)
   .attr('transform', `translate(${padding}, ${padding})`)
+
+svg.selectAll('myCircles')
+  .data(data2)
+  .enter()
+  .append('circle')
+  .attr('fill', 'white')
+  .attr('stroke', '#7aceff')
+  .attr('stroke-width', 2)
+  .attr('class', 'dot')
+  .attr('data-date', d => d.date)
+  .attr('data-value', d => d.value)
+  .attr('cx', d => xScale(d.date))
+  .attr('cy', d => yScale(d.value))
+  .attr('r', 4)
+  .attr('transform', `translate(${padding}, ${padding})`)
+
+// 
+/* Initialize tooltip */
+var tooltip = d3.select('body').append("div")
+    .attr('class', 'tooltip')
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+
+    
+// svg.append('rect')
+//   .style('fill', 'none')
+//   .style('pointer-events', 'all')
+//   .attr('width', width)
+//   .attr('height', height)
+//   .on('mouseover', mouseover)
+//   .on('mousemove', mousemove)
+//   .on('mouseout', mouseout);
+
+svg.selectAll('circle')
+  .style('pointer-events', 'all')
+  .on('mouseover', onCircleMouseover)
+  .on('mousemove', onCircleMouseMove)
+  .on('mouseout', onCircleMouseOut)
+
+function onCircleMouseover() {
+  let xv = this.getAttribute('data-date');
+  let yv = this.getAttribute('data-value');
+  let format = d3.timeFormat("%I:%M %p")
+  tooltip.style("visibility", "visible")
+  tooltip.html(`<div><span>Time: ${format(new Date(xv))}</span><br><span>Value: ${yv}</span></div>`)
+  tooltip.style('top', `${d3.mouse(this)[1] - 15}px`);
+  tooltip.style('left', `${d3.mouse(this)[0] + padding - 40}px`);
+}
+function onCircleMouseMove() {
+}
+function onCircleMouseOut() {
+  tooltip.style('visibility', 'hidden');
+}
+// tip = d3.tip().attr('class', 'd3-tip').
+// tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d; });
+
+/* Invoke the tip in the context of your visualization */
+// vis.call(tip)
+
+// vis.selectAll('rect')
+//   .data(data)
+//   .enter()
+//   .append('rect')
+//   .attr('width', function() { return x.rangeBand() })
+//   .attr('height', function(d) { return h - y(d) })
+//   .attr('y', function(d) { return y(d) })
+//   .attr('x', function(d, i) { return x(i) })
+//   .on('mouseover', tip.show)
+//   .on('mouseout', tip.hide)
 
 // －－－
 var focusText = svg
@@ -148,16 +280,16 @@ var focusText = svg
               .attr("alignment-baseline", "middle")
               .attr('x', 200)
               .attr('y', 200)
-              .text('Hello World!')
+              // .text('Hello World!')
 
-svg.append('rect')
-  .style('fill', 'none')
-  .style('pointer-events', 'all')
-  .attr('width', width)
-  .attr('height', height)
-  .on('mouseover', mouseover)
-  .on('mousemove', mousemove)
-  .on('mouseout', mouseout);
+let hoverLine = svg.append('line')
+                  .attr('x1', 0)
+                  .attr('y1', padding)
+                  .attr('x2', 0)
+                  .attr('y2', height - padding)
+                  .attr('stroke', '#a3a3a3')
+                  .attr('stroke-width', 0.5)
+
 
 // var focus = svg
 //   .append('g')
@@ -169,18 +301,20 @@ svg.append('rect')
 
 function mouseover() {
   // focus.style("opacity", 1)
-  focusText.style("opacity",1)
+  focusText.style("opacity", 1)
 }
-
 // var bisect = d3.bisector(d => { return d.date; }).left;
 
 function mousemove() {
   var x0 = xScale.invert(d3.mouse(this)[0] - padding);
   var y0 = yScale.invert(d3.mouse(this)[1] - padding);
-  console.log('xo', x0);
-  console.log('x, y', `${x0}, ${y0}`)
 
-  focusText.text(`${x0}, ${y0}`)
+  hoverLine
+    .transition()
+    .duration(100)
+    .ease(d3.easeBounce)
+    .attr('x1', xScale(x0) + padding)
+    .attr('x2', xScale(x0) + padding)
 
   // bisect(data, )u
   // var i = bisect(data, x0, 1);
@@ -207,3 +341,29 @@ function mouseout() {
 // https://observablehq.com/@d3/d3-bisect
 
 // https://htmlcssjavascript.com/web/mastering-svg-bonus-content-a-d3-line-chart/
+
+let color = d3.scaleLinear()
+              .domain([1, 10])
+              .range(['#f00', '#00f']);
+
+console.log(color(3));
+
+
+let category = d3.select('body').append("div")
+    .attr('class', 'category')
+    .style("position", "absolute")
+    .style('top', `56px`)
+    .style('left', `${width}px`);
+
+category.append('div')
+        .attr('class', 'group red')
+        .html('<h2>Data1</h2>')
+category.append('div')
+        .attr('class', 'group blue')
+        .html('<h2>Data2</h2>')
+// d3.select('body').append("div")
+//     .attr('class', 'category')
+//     .style("position", "absolute")
+//     .style('top', `50px`)
+//     .style('left', `${width}px`)
+//     .html('<h2>Data1</h2>')
