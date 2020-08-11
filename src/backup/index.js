@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
+import { bisect } from 'd3';
 
-let width = 800;
+let width = 1200;
 let height = 800;
 let padding = 50;
 
@@ -88,6 +89,18 @@ let svg = d3.select('svg')
   .attr('width', width)
   .attr('height', height)
 
+  
+
+svg.append('rect')
+  .style('fill', 'none')
+  .style('pointer-events', 'all')
+  .attr('width', width)
+  .attr('height', height)
+  .on('mousedown', click)
+  .on('mouseover', mouseover)
+  .on('mousemove', mousemove)
+  .on('mouseout', mouseout);
+
 let xExtent = d3.extent(data, d => d.date)
 let yExtent = d3.extent(data, d => d.value)
 
@@ -116,6 +129,7 @@ let xAxis = d3.axisBottom()
 
 let xaxis = svg.append('g')
   .attr("class", "x axis")
+  .style('pointer-events', 'none')
   .attr('transform', `translate(${padding}, ${height - padding})`)
   .call(xAxis)
   .call(xAxisText)
@@ -138,8 +152,9 @@ let xaxis = svg.append('g')
 let yaxis = svg.append('g')
   .attr("class", "y axis")
   .attr('transform', `translate(${padding}, ${padding})`)
+  .style('pointer-events', 'none')
   .call(yAxis)
-  .call(yAxisText)
+  .call(yAxis)
   .call(grid)
 
 function yAxisText(selection) {
@@ -158,6 +173,7 @@ yaxis.selectAll("line")
 let line = d3.line()
   .x(d => xScale(d.date))
   .y(d => yScale(d.value))
+  .curve(d3.curveStepAfter)
 
 let g = svg.append('g');
 
@@ -224,21 +240,14 @@ var tooltip = d3.select('body').append("div")
     .style("position", "absolute")
     .style("visibility", "hidden")
 
-    
-// svg.append('rect')
-//   .style('fill', 'none')
-//   .style('pointer-events', 'all')
-//   .attr('width', width)
-//   .attr('height', height)
-//   .on('mouseover', mouseover)
-//   .on('mousemove', mousemove)
-//   .on('mouseout', mouseout);
 
 svg.selectAll('circle')
   .style('pointer-events', 'all')
   .on('mouseover', onCircleMouseover)
   .on('mousemove', onCircleMouseMove)
   .on('mouseout', onCircleMouseOut)
+
+
 
 function onCircleMouseover() {
   let xv = this.getAttribute('data-date');
@@ -270,6 +279,8 @@ function onCircleMouseOut() {
 //   .attr('x', function(d, i) { return x(i) })
 //   .on('mouseover', tip.show)
 //   .on('mouseout', tip.hide)
+
+
 
 // －－－
 var focusText = svg
@@ -315,27 +326,107 @@ function mousemove() {
     .ease(d3.easeBounce)
     .attr('x1', xScale(x0) + padding)
     .attr('x2', xScale(x0) + padding)
-
-  // bisect(data, )u
-  // var i = bisect(data, x0, 1);
-  // selectedData = data[i]
-  // focus
-  //   .attr("cx", x(selectedData.x))
-
-  //   .attr("cy", y(selectedData.y))
-  // focusText
-  //   .html("x:" + selectedData.date + "  -  " + "y:" + selectedData.value)
-  //   .attr('x', 200)
-  //   .attr('y', 200)
-    // .attr("x", x(selectedData.x)+15)
-    // .attr("y", y(selectedData.y))
   }
 
 function mouseout() {
   // focus.style("opacity", 0)
   focusText.style("opacity", 0)
 }
+let clickLine;
+let clickLinkText;
+let clickRect;
+function click() {
+  var x0 = xScale.invert(d3.mouse(this)[0] - padding);
+  var y0 = yScale.invert(d3.mouse(this)[1] - padding);
+  
+  let x0v = xScale(x0) + padding;
+  if (clickLine) {
+    clickLine.remove();
+  }
+  // clickLine.remove();
+  clickLine = svg.append('line')
+                  .attr('x1',  x0v)
+                  .attr('y1', padding)
+                  .attr('x2', x0v)
+                  .attr('y2', height - padding)
+                  .attr('stroke', '#a3a3a3')
+                  .attr('stroke-width', 2)
+  let f = d3.timeFormat("%I:%M %p")
 
+  
+  // console.log('xScale.invert(x0v - padding)', new Date(xScale.invert(x0v - padding)));
+  let ld = new Date(xScale.invert(x0v - padding));
+
+  // clickLinkText.remove();
+  if (clickLinkText) {
+    clickLinkText.remove();
+  }
+  clickLinkText = svg
+                  .append('g')
+                  .append('text')
+                  .style("opacity", 1)
+                  .text(`${ld.toLocaleString()}`)
+                  .style('pointer-events', 'none')
+                  .attr("text-anchor", "left")
+                  .attr("alignment-baseline", "middle")
+                  .attr('x', x0v - 70)
+                  .attr('y', 30)
+  var selectedData;
+  if (clickRect) {
+    clickRect.remove();
+  }
+  clickRect = svg.append('rect')
+                .attr('x', x0v)
+                .attr('y', 50)
+                .attr('width', 50)
+                .attr('height', 30)
+                .attr('stroke', 'black')
+                .attr('fill', 'white')
+
+                // var tdata = [
+                //   {
+                //     title: 'One',
+                //     value: 1
+                //   }, {
+                //     title: 'Two',
+                //     value: 2
+                //   }, {
+                //     title: 'Three',
+                //     value: 3
+                //   }, {
+                //     title: 'Four',
+                //     value: 4
+                //   }, {
+                //     title: 'Five',
+                //     value: 5
+                //   }
+                // ];
+
+                // console.log('===========================');
+                // var bisect3 = d3.bisector(function(d) { return d.value; }).right;
+                // console.log('')
+                // console.log(bisect3(tdata, 2));
+                // console.log('===========================');
+    console.log('===========================');
+    var bisect = d3.bisector(function(d) { return new Date(d.date) }).right;
+    console.log(ld);
+    console.log(...data2)
+    var i = bisect(data2, ld);
+    selectedData = data[i]
+    console.log('I', i);
+    console.log('===========================');
+    // var i = bisect(data.map(d => d.value), 2, 1);
+    // console.log(i);
+  // hoverLine
+  //   .transition()
+  //   .duration(100)
+  //   .ease(d3.easeBounce)
+  //   .attr('x1', xScale(x0) + padding)
+  //   .attr('x2', xScale(x0) + padding)
+
+  // console.log(this);
+  // console.log('click');
+}
 // https://www.d3-graph-gallery.com/graph/line_cursor.html
 // https://www.d3-graph-gallery.com/graph/area_lineDot.html
 // https://observablehq.com/@d3/d3-bisect
@@ -361,6 +452,8 @@ category.append('div')
 category.append('div')
         .attr('class', 'group blue')
         .html('<h2>Data2</h2>')
+
+
 // d3.select('body').append("div")
 //     .attr('class', 'category')
 //     .style("position", "absolute")

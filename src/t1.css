@@ -1,0 +1,14 @@
+.x.axis line {
+    stroke: #acacac;
+    opacity: 0.5;
+}
+
+.y.axis line {
+    stroke: #acacac;
+    opacity: 0.5;
+}
+
+.flagValue {
+    position: absolute;
+    border: 1px solid black;
+}

@@ -1,3 +1,7 @@
+* {
+  margin: 0;
+  padding: 0;
+}
 svg {
   /* border: 1px solid red; */
 }
@@ -43,7 +47,6 @@ body { font: 12px Arial;}  	/* set the default text for anything occuring in the
 	  
 	.x.axis .minor {
 	   stroke-opacity: .5;
-	   stroke: red;
 	   stroke-width: 1.5;
 	}
 	 
