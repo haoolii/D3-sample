@@ -8,3 +8,32 @@
   fill: none;
   pointer-events: all;
 }
+
+.axis line,
+.axis.line{
+  stroke: rgb(165, 165, 165);
+}
+
+.axis path{
+  stroke: rgb(165, 165, 165);
+}
+
+.axis text{
+  /* fill: red; */
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}

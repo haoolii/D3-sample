@@ -52,7 +52,7 @@ let focus = svg.append('g');
 let data = {
   name: 'root #1',
   width: 100,
-  height: 300,
+  height: 100,
   children: [
   {
     name: 't1 #1',
@@ -129,16 +129,22 @@ const update = () => {
 }
 update();
 
-// document.getElementById('add').addEventListener('click', () => {
-//   data.push(
-//     {
-//       task: `task${data.length}`,
-//       width: Math.random() * 200,
-//       height: Math.random() * 200
-//     }
-//   )
-//   update();
-// });
+document.getElementById('add').addEventListener('click', () => {
+  data.children.push({
+    name: 't2 #2',
+    task: 'task2',
+    width: Math.random() * 200,
+    height: Math.random() * 200
+  })
+  // data.push(
+  //   {
+  //     task: `task${data.length}`,
+  //     width: Math.random() * 200,
+  //     height: Math.random() * 200
+  //   }
+  // )
+  update();
+});
 
 
 // let family = d3.hierarchy({
