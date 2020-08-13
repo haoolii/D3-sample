@@ -52,13 +52,12 @@ let lineg = focus.append('g');
 // Enter
 
 updateTest();
-function updateTest() {
+function updateTest(d) {
     nodes = [];
 
     root = d3.hierarchy(data, d => d.children);
     root.eachBefore(node => {
         nodes.push(node);
-        // console.log(node);
     });
 
     // 
@@ -94,29 +93,33 @@ function updateTest() {
 
     // ===============
 
-    let node = lineg.selectAll('rect').data(nodes);
+    let node = lineg.selectAll('rect').data(nodes, node => node.data.task);
 
     // Enter
 
-    let nodeEnter = node.enter()
+    node.enter()
         .append('rect')
         .style('cursor', node => node.data.children ? 'pointer' : '')
         .on('click', click)
-        .attr('y', (d, i) => i * yScale.bandwidth())
+        .each(d => console.log('enter', d.data.task))
+        // .attr('y', (d, i) => i * yScale.bandwidth())
+        // .attr('x', d => xScale(d.data.start))
         .attr('x', d => xScale(d.data.start))
+        .attr('width', d => xScale(d.data.end) - xScale(d.data.start))
         .transition()
         .duration(duration)
-        .attr('width', d => xScale(d.data.end) - xScale(d.data.start))
+        .attr('y', (d, i) => i * yScale.bandwidth())
         .attr('height', yScale.bandwidth())
 
     // Update
     node
+        .each(d => console.log('update', d.data.task))
+        .attr('x', d => xScale(d.data.start))
+        .attr('width', d =>  xScale(d.data.end) - xScale(d.data.start))
         .transition()
         .duration(duration)
-        .attr('width', d =>  xScale(d.data.end) - xScale(d.data.start))
         .attr('y', (d, i) => i * yScale.bandwidth())
         .attr('height', yScale.bandwidth())
-        .attr('x', d => xScale(d.data.start))
 
     node.exit().remove();
 }
@@ -129,7 +132,7 @@ function click(d) {
         d.data.children = d.data._children;
         d.data._children = null;
     }
-    updateTest();
+    updateTest(d);
 }
 
 document
